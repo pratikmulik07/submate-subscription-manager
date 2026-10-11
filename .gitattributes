@@ -1,0 +1,53 @@
+# Normalize all text files to LF in the repository.
+* text=auto eol=lf
+
+# CI/CD workflow definitions and deployment config must use LF.
+*.yml text eol=lf
+*.yaml text eol=lf
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+.dockerignore text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.editorconfig text eol=lf
+fly.toml text eol=lf
+*.toml text eol=lf
+
+# Shell scripts must use LF so they run inside Linux CI and containers.
+*.sh text eol=lf
+
+# Source, config and docs stay LF for cross-platform consistency.
+*.js text eol=lf
+*.jsx text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.svg text eol=lf
+
+# Windows-only scripts keep native CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary assets - never apply line-ending conversion.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.icns binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
+*.sqlite binary
+*.sqlite3 binary
+*.pdf binary
+*.zip binary

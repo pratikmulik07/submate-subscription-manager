@@ -1,0 +1,19 @@
+# Dependencies and build output are recreated inside the image.
+node_modules
+dist
+
+# Never ship local data, backups, or secrets.
+data
+backups
+.env
+.env.*
+!.env.example
+
+# Tests, coverage, and editor/VCS noise are not needed to build or run.
+tests
+coverage
+.git
+.github
+.vscode
+.idea
+*.log

@@ -1,0 +1,23 @@
+node_modules/
+dist/
+.npm-cache/
+*.log
+
+# Local SQLite database and backups - never commit user data
+data/
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+*.db
+*.db-journal
+backups/
+
+# Local environment files - ignore every .env variant, keep the example template
+.env
+.env.*
+!.env.example
+
+# Generated output
+coverage/
+.vite/

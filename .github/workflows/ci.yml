@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test-quality:
+    name: Build, Test & Quality (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # --- Stage 1: Build ---
+      - name: Build production bundle
+        run: npm run build
+
+      # --- Stage 2: Automated Testing ---
+      - name: Run automated tests (server + web)
+        run: npm test
+
+      - name: Smoke-test the built server
+        env:
+          SUBMATE_DATA_DIR: ${{ runner.temp }}/submate-ci
+        run: |
+          node server/index.js &
+          SERVER_PID=$!
+          for attempt in $(seq 1 15); do
+            if curl --fail --silent http://127.0.0.1:3001/api/health; then
+              echo ""
+              echo "Health check passed on attempt ${attempt}."
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:3001/api/health
+          echo ""
+          kill "$SERVER_PID"
+
+      # --- Stage 3: Code Quality Check ---
+      - name: Code quality - lint
+        run: npm run lint
+
+      - name: Code quality - server test coverage
+        run: npm run test:coverage
+
+      # --- Artifacts ---
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-node${{ matrix.node-version }}
+          path: dist
+          if-no-files-found: error
